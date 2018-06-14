@@ -4,5 +4,6 @@ process.on('message', function(m) {
   
     // Pass results back to parent process
     process.send(m.toUpperCase(m));
+    console.log('fork process',process.pid);
   });
   

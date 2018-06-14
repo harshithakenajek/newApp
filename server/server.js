@@ -15,21 +15,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 
-// app.post('/user/signin', (req, res,callback) => {
-//     // var body = _.pick(req.body, ['email', 'password']);
-//     // var user = new User(body);
-//     var email = req.body.email;
-//     var password = req.body.password;
-//     dbConnection.createDBConnection(function (err, db) {
-//         if (err) {
-//             console.log("ERRRRRRRRRR ");
-//             console.error(err);
-//             callback(err);
-//         }
-//     db.collection('User').insertOne({email:email,password:password});
-//         res.status(200).send("Success");
-//     } );
-// });
+
 app.get('/books/sequential',(req,res,callback)=>{
     // console.log("Request",req.query);
     // var bookName = req.query.bookName;

@@ -2,46 +2,59 @@ const dbConnection = require('./../lib/dbConnection');
 const async = require('async');
 
 
-module.exports = {
-    booksParallel: function(res,name,by,cb){
-        var tasks = [];
-        dbConnection.createDBConnection(function(err,db){
-            if(err){
-                cb(err);
-            }
-            var collection = db.collection('bookDetails');
-        
-        var start = new Date();
-        tasks.push(function(taskCallback){
-            collection.findOne({bookName:name},function(err,data){
-                if(err){
-                    taskCallback(null,err);
-                }
-                taskCallback(null,data);
+
+
+const booksParallel = (res, name, by, cb) => {
+    // var tasks = [];
+    dbConnection.createDBConnection(async (err, db) => {
+        if (err) {
+            console.log("Sequential Errror", err);
+            cb(err);
+            return;
+        }
+        const collection = db.collection('bookDetails');
+        const start = new Date();
+
+        const findByBookName = () => {
+            return new Promise((resolve, reject) => {
+                collection.findOne({ bookName: name }, (err, data) => {
+                    if (err) {
+                        reject(err);
+                        console.log(err);
+                        return;
+                    }
+                    else {
+                        // console.log("data1",data);
+                        resolve(data);
+                        // var publishedby = await data.publishedBy;
+                    }
+                });
             })
-        });
-        tasks.push(function(taskCallback){
-            collection.findOne({publishedBy:by},function(err,data){
-                if(err){
-                    taskCallback(null,err);
-                }
-                taskCallback(null,data);
+        }
+        const findByPublishedBy = () => {
+            return new Promise((resolve, reject) => {
+                collection.findOne({ publishedBy: by }, (err, data) => {
+                    if (err) {
+                        reject(err);
+                        console.log(err);
+                        return;
+                    }
+                    else {
+                        // console.log("data2",data);
+                        resolve(data);
+                    }
+                });
             })
-        });
-        async.parallel(tasks,
-        // optional callback
-        function(err, results){
-            if(err){
-                console.log('Error');
-            } else {
-        
-            }
-            console.log(results);
-            res.status(200).send("success");
-            console.log('done', new Date().getTime() - start.getTime());
-            //results is now equal to [ 'one', 'two', undefined ]
-            // the second function had a shorter timeout.
-        });
+
+        }
+        const rr = await Promise.all([await findByBookName(), await findByPublishedBy()]);
+        console.log('parallel', rr);
+        res.status(200).send("success");
+        dbConnection.closeDB(db);
+        console.log('done', new Date().getTime() - start.getTime());
     });
-    }
+}
+
+module.exports = {
+    booksParallel
 }

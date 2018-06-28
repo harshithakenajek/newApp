@@ -1,13 +1,11 @@
-var app = require('./../../server.js');
 const dbConnection = require('./../lib/dbConnection');
-var Promise = require('promise');
-const async = require('async-await');
+const Promise = require('promise');
 
 const sequentialExample = (res, bookName, by, cb) => {
     dbConnection.createDBConnection(async (err, db) => {
         if (err) {
-            console.log("Sequential Errror", err);
-            callback(err);
+            console.log('Sequential Errror', err);
+            cb(err);
             return;
         }
         const collection = db.collection('bookDetails');
@@ -22,13 +20,13 @@ const sequentialExample = (res, bookName, by, cb) => {
                         return;
                     }
                     else {
-                        console.log("data1", data);
+                        console.log('data1', data);
                         resolve(data);
                         // var publishedby = await data.publishedBy;
                     }
                 });
-            })
-        }
+            });
+        };
         const findByPublishedBy = () => {
             return new Promise((resolve, reject) => {
                 collection.findOne({ publishedBy: by }, (err, data) => {
@@ -38,26 +36,26 @@ const sequentialExample = (res, bookName, by, cb) => {
                         return;
                     }
                     else {
-                        console.log("data2", data);
+                        console.log('data2', data);
                         resolve(data);
                     }
                 });
-            })
+            });
 
-        }
-        var res1 = await findByBookName();
-        // console.log('user',res);
-        res1 = await findByPublishedBy();
-        // console.log('user2',res);
-        res.status(200).send("success");
+        };
+        const res1 = await findByBookName();
+        console.log('result',res1);
+        const res2 = await findByPublishedBy();
+        console.log('result2',res2);
+        res.status(200).send('success');
         dbConnection.closeDB(db);
         console.log('done', new Date().getTime() - start.getTime());
     });
-}
+};
 
 module.exports = {
     sequentialExample
-}
+};
 
 
 

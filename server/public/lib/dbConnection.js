@@ -1,13 +1,13 @@
-var MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 
 
 function createDBConnection(cbk) {
-    var dbUrl = "mongodb://localhost:27017/Books";
+    const dbUrl = 'mongodb://localhost:27017/Books';
 
     MongoClient.connect(dbUrl, function (err, db) {
         if (err) {
 
-            return cbk(true, null)
+            return cbk(true, null);
         }
 
         console.log('connected');
@@ -16,10 +16,10 @@ function createDBConnection(cbk) {
 }
 
 function closeDB(db) {
-    console.log("Close DB");
+    console.log('Close DB');
     db.close();
 }
 module.exports = {
     createDBConnection,
     closeDB
-}
+};
